@@ -1,37 +1,32 @@
-# Engenharia Reversa e Reestruturação de Sistema de Pedidos
+# Relatório de Atividade: Engenharia Reversa e Reestruturação
 
-Este projeto demonstra o processo de modernização de um sistema legado, passando pela análise, redocumentação e reestruturação completa utilizando princípios de Engenharia de Software modernos.
+Este repositório contém a entrega completa das Partes 01, 02 e 03 da atividade de Melhoria de Sistemas Legados.
 
-## 1. Engenharia Reversa (Parte 01 e 02)
+## 📍 Guia de Navegação
 
-O sistema original (`SistemaLegadoPedidos.cs`) foi identificado como um **God Method** (Método Deus), onde uma única função era responsável por todas as etapas do processo.
+### Parte 01: Engenharia Reversa
+A análise do código original identificou as seguintes responsabilidades e regras implícitas:
+- **Responsabilidade:** Processamento centralizador de pedidos.
+- **Regras Mapeadas:** Cálculos de Frete (Nacional/Inter), Descontos (VIP/Premium/Novo), Juros (Cartão) e Alertas de Segurança.
+- **Documentação:** O arquivo [SistemaLegadoPedidos.cs](./SistemaLegadoPedidos.cs) foi comentado detalhando cada um desses pontos.
 
-### Regras de Negócio Identificadas:
-- **Financeiro:** Cálculo de subtotal com taxas por categoria (Alimento, Importado), descontos progressivos por tipo de cliente (VIP, Premium, etc.) e juros fixos para parcelamento no cartão.
-- **Logística:** Cálculo de frete dinâmico baseado no peso e destino (Nacional BR vs Internacional), com suporte a frete expresso e cupons de isenção.
-- **Segurança:** Bloqueios de clientes restritos e alertas automáticos para pedidos de alto valor (>1000) ou comportamentos suspeitos (Clientes novos > 5000).
-- **Infraestrutura:** Persistência de logs e notificações via e-mail condicionais.
+### Parte 02: Redocumentação e Semântica
+Focamos em transformar o "código obscuro" em algo compreensível:
+- **Nomes Adequados:** Variáveis como `l` viraram `_logsDoSistema` e `temErro` virou `possuiViolacoesDeRegra`.
+- **Justificativa:** A renomeação seguiu o padrão *Clean Code*, removendo ambiguidades e tornando o código "autodocumentado".
+- **Diagrama de Classes:** Disponível em [DiagramaDeClasses.md](./DiagramaDeClasses.md).
 
-## 2. Redocumentação (Parte 02)
+### Parte 03: Reestruturação Arquitetural (Caminho para o Nível Superior)
+Nesta fase, fomos além da simples reescrita e propusemos uma nova arquitetura (pasta `SistemaPedidosModerno/`):
 
-A primeira etapa de melhoria focou em:
-- **Semântica:** Renomeação de variáveis de nomes genéricos (`temErro`, `itens`) para nomes descritivos (`possuiViolacoesDeRegra`, `itensDoPedido`).
-- **Documentação:** Inclusão de comentários XML para facilitar o IntelliSense e manutenção futura.
+1. **Separação de Camadas:** 
+   - `Core`: Modelos ritos e Interfaces.
+   - `Services`: Lógica de negócio, calculadoras e orquestração.
+   - `Infrastructure`: Implementações concretas de Log e Notificação.
+2. **Uso de Design Patterns:**
+   - **Strategy:** Para as calculadoras financeiras (facilita a inclusão de novas regras sem modificar o serviço principal).
+   - **Dependency Inversion:** O software depende de abstrações, não de implementações concretas (Log/Email).
+3. **Resultado Estruturado:** Introdução da classe `ResultadoProcessamento`, permitindo que o sistema seja consultado programaticamente em vez de apenas retornar texto puro.
 
-## 3. Reestruturação Arquitetural (Parte 03)
-
-A nova versão (`SistemaPedidosModerno/`) foi desenvolvida seguindo os princípios **SOLID** e **Clean Architecture**.
-
-### Melhorias Implementadas:
-- **Princípio de Responsabilidade Única (SRP):** Cada regra (frete, desconto, juros) agora possui sua própria classe.
-- **Pattern Strategy:** As calculadoras financeiras foram desacopladas do serviço principal, permitindo que novas regras de frete ou desconto sejam adicionadas sem alterar o orquestrador.
-- **Encapsulamento:** Remoção de campos públicos em favor de propriedades e métodos de comportamento nas classes de domínio (`Pedido`, `ItemPedido`).
-- **Desacoplamento de Infraestrutura:** Uso de interfaces (`ILogger`, `INotificador`) que permitem trocar a forma de log ou envio de e-mail sem afetar a lógica de negócio.
-- **Tipagem Forte:** Substituição de strings mágicas por `Enums` para evitar erros de digitação e ambiguidades.
-
-## Estrutura do Projeto Moderno
-- `Core/Enums`: Definições globais de tipos.
-- `Core/Models`: Entidades de domínio ricas.
-- `Core/Interfaces`: Contratos para inversão de dependência.
-- `Services`: Lógica de orquestração e calculadoras concretas.
-
+---
+**Conclusão:** O projeto migrou de um estado de **Dívida Técnica Crítica** para uma estrutura modular, escalável e de fácil manutenção, respeitando rigorosamente os princípios SOLID.
