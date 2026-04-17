@@ -1,6 +1,7 @@
 # Relatório de Atividade: Engenharia Reversa e Reestruturação
 
 Este repositório contém a entrega completa das Partes 01, 02 e 03 da atividade de Melhoria de Sistemas Legados.
+Alunos: Keven Lucas e Fernanda Galvão
 
 ## 📍 Guia de Navegação
 
